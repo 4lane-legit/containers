@@ -1,0 +1,21 @@
+FROM alpine:3.10
+LABEL Maintainer="Ankit Bhardwaj <real.four.lane@gmail.com>" 
+LABEL Description="Alpine Nginx"
+      
+RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
+ENV TZ=UTC
+RUN export RUNLEVEL=1 && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Install packages
+RUN apk --no-cache add \
+    curl=7.66.0-r4 git=2.22.5-r0 openssh-client=8.1_p1-r0 \ 
+    bash=5.0.0-r0 libx11=1.6.12-r1 nginx=1.16.1-r3 apk-tools=2.10.8-r0 && \
+    rm -rf /var/cache/apk/* \
+    && mkdir -p /var/www/ \
+    && adduser -D -S -G appuser appuser \
+    && chown -R appuser.appuser /run && \
+    mkdir  /run/nginx && \
+    chown -R appuser.appuser /var/lib/nginx && \
+    chown -R appuser.appuser /var/tmp/nginx && \
+    chown -R appuser.appuser /var/log/nginx 
